@@ -1,7 +1,61 @@
 ﻿@page "/"
 
+@using DixieFlatline.Extensions;
+
 <PageTitle>Index</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">Add New Column</h5>
+    <EditForm Model="@newColumn" OnValidSubmit="@HandleValidSubmit" class="row align-items-center">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-Welcome to your new app.
+        <div class="col-auto">
+            <label for="new-column-table-name" class="visually-hidden">Table Name</label>
+            <InputText @bind-Value="@newColumn.TableName" id="new-column-table-name" class="form-control" placeholder="Table Name" />
+        </div>
+
+        <div class="col-auto">
+            <label for="new-column-name" class="visually-hidden">Column Name</label>
+            <InputText @bind-Value="@newColumn.Name" id="new-column-name" class="form-control" placeholder="Column Name" />
+        </div>
+
+        <div class="col-auto">
+            <label for="new-column-generator" class="visually-hidden">Generator</label>
+            <InputSelect @bind-Value="@newColumn.Generator" id="new-column-generator" class="form-select">
+                @foreach (var generator in Enum.GetValues<Generator>())
+                {
+                    <option value="@generator">@generator.ToString().Replace('_', ' ')</option>
+                }
+            </InputSelect>
+        </div>
+
+        <div class="col-auto">
+            <button class="btn btn-primary" type="submit">Submit</button>
+        </div>
+    </EditForm>
+  </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Table Name</th>
+            <th scope="col">Column Name</th>
+            <th scope="col">Generator</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var (column, index) in columns.WithIndex())
+        {
+            <tr>
+                <th scope="row">@(index + 1)</th>
+                <td>@column.TableName</td>
+                <td>@column.Name</td>
+                <td>@column.Generator.ToString().Replace('_', ' ')</td>
+            </tr>
+        }
+    </tbody>
+</table>
